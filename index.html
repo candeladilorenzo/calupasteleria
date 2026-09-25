@@ -4,32 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calu Pastelería - Costos y Recetas</title>
+  <!-- Librería para exportar PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
-      --primary: #e8a598;
-      --primary-dark: #d28b7e;
-      --bg: #fffaf8;
-      --card-bg: #ffffff;
-      --text: #4a3e3d;
-      --border: #f0d8d2;
+      --bordo: #802329;
+      --verde-musgo: #8A9279;
+      --cremita: #F8F3EE;
+      --rosa-viejo: #E8A8A1;
+      --text: #3D2B2D;
+      --card-bg: #FFFFFF;
+      --border: #E5D8CF;
     }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
+      background-color: var(--cremita);
       color: var(--text);
       margin: 0;
       padding: 20px;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
-    h1, h2, h3 {
-      color: var(--primary-dark);
+    h1 {
+      color: var(--bordo);
       text-align: center;
+      font-size: 2.2em;
+      margin-bottom: 20px;
+    }
+
+    h2, h3 {
+      color: var(--bordo);
+      margin-top: 0;
     }
 
     .grid {
@@ -38,7 +48,7 @@
       gap: 20px;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 850px) {
       .grid {
         grid-template-columns: 1fr 1fr;
       }
@@ -48,8 +58,8 @@
       background: var(--card-bg);
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border: 1fr solid var(--border);
+      box-shadow: 0 4px 12px rgba(128, 35, 41, 0.08);
+      border: 1px solid var(--border);
     }
 
     form {
@@ -60,48 +70,70 @@
 
     label {
       font-weight: 600;
-      font-size: 0.9em;
+      font-size: 0.88em;
+      color: var(--text);
     }
 
     input, select, button {
       padding: 10px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      font-size: 1em;
+      font-size: 0.95em;
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--bordo);
     }
 
-    button {
-      background-color: var(--primary);
+    .btn-primary {
+      background-color: var(--bordo);
       color: white;
       border: none;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: opacity 0.2s;
     }
 
-    button:hover {
-      background-color: var(--primary-dark);
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background-color: var(--verde-musgo);
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-export {
+      background-color: var(--rosa-viejo);
+      color: var(--bordo);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
     .btn-danger {
-      background-color: #e74c3c;
-      padding: 4px 8px;
+      background-color: #d9534f;
+      color: white;
+      padding: 3px 8px;
       font-size: 0.8em;
-    }
-
-    .btn-danger:hover {
-      background-color: #c0392b;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
     ul {
       list-style: none;
       padding: 0;
-      margin: 0;
+      margin: 10px 0;
     }
 
     li {
@@ -112,15 +144,63 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .total-box {
-      margin-top: 15px;
-      padding: 15px;
-      background-color: var(--bg);
+    .resumen-box {
+      background-color: var(--cremita);
       border-radius: 8px;
-      text-align: right;
-      font-size: 1.2em;
+      padding: 15px;
+      margin-top: 15px;
+      border: 1px solid var(--border);
+    }
+
+    .resumen-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.95em;
+    }
+
+    .resumen-row.destacado {
       font-weight: bold;
-      color: var(--primary-dark);
+      font-size: 1.1em;
+      color: var(--bordo);
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .ganancia-text {
+      color: var(--verde-musgo);
+      font-weight: bold;
+    }
+
+    /* Estilos limpios para exportación de PDF */
+    .pdf-container {
+      padding: 20px;
+      font-family: sans-serif;
+      color: #333;
+    }
+
+    .pdf-header {
+      text-align: center;
+      border-bottom: 2px solid #802329;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .pdf-table th, .pdf-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .pdf-table th {
+      background-color: #802329;
+      color: white;
     }
   </style>
 </head>
@@ -130,7 +210,7 @@
     <h1>Calu Pastelería 🧁</h1>
 
     <div class="grid">
-      <!-- SECCIÓN 1: GESTIÓN DE INSUMOS -->
+      <!-- SECCIÓN 1: INSUMOS -->
       <div class="card">
         <h2>1. Insumos / Ingredientes</h2>
         <form id="form-insumo">
@@ -140,7 +220,7 @@
           </div>
           <div style="display: flex; gap: 10px;">
             <div style="flex: 2;">
-              <label>Cantidad total paquete:</label>
+              <label>Cantidad paquete:</label>
               <input type="number" step="0.01" id="insumo-cantidad" placeholder="1" required>
             </div>
             <div style="flex: 1;">
@@ -158,54 +238,128 @@
             <label>Precio de compra ($):</label>
             <input type="number" step="0.01" id="insumo-precio" placeholder="1000" required>
           </div>
-          <button type="submit">Guardar Insumo</button>
+          <button type="submit" class="btn-primary">Guardar Insumo</button>
         </form>
 
-        <h3>Mis Insumos</h3>
+        <h3 style="margin-top: 20px;">Mis Insumos</h3>
         <ul id="lista-insumos"></ul>
       </div>
 
-      <!-- SECCIÓN 2: CALCULADORA DE RECETAS -->
+      <!-- SECCIÓN 2: ARMADO Y COSTOS DE RECETA -->
       <div class="card">
-        <h2>2. Armar Receta</h2>
-        <form id="form-receta">
+        <h2>2. Armar Receta y Costos</h2>
+        <form id="form-receta-info">
           <div>
-            <label>Seleccionar Insumo:</label>
-            <select id="select-insumo" required>
-              <option value="">-- Elige un ingrediente --</option>
-            </select>
+            <label>Nombre de la Receta / Producto:</label>
+            <input type="text" id="receta-nombre" placeholder="Ej. Tarta de Frutillas" required>
           </div>
-          <div>
-            <label>Cantidad requerida para la receta:</label>
-            <input type="number" step="0.01" id="receta-cantidad" placeholder="Ej. 250 (g) o 0.25 (kg)" required>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <label>Rendimiento (Cant. o Tamaño):</label>
+              <input type="text" id="receta-rendimiento" placeholder="Ej. 12 porciones / Tarta 24cm / 10u" required>
+            </div>
+            <div style="flex: 1;">
+              <label>Unidades totales producidas:</label>
+              <input type="number" id="receta-unidades-num" value="1" min="1" required>
+            </div>
           </div>
-          <button type="submit">Agregar a la Receta</button>
         </form>
 
-        <h3>Ingredientes de la Receta</h3>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 15px 0;">
+
+        <form id="form-agregar-ingrediente">
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 2;">
+              <label>Ingrediente:</label>
+              <select id="select-insumo" required>
+                <option value="">-- Seleccionar --</option>
+              </select>
+            </div>
+            <div style="flex: 1;">
+              <label>Cantidad usada:</label>
+              <input type="number" step="0.01" id="receta-cantidad" placeholder="250" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-secondary">Agregar Ingrediente</button>
+        </form>
+
+        <h3>Ingredientes</h3>
         <ul id="lista-receta"></ul>
 
-        <div class="total-box">
-          Costo Total: $<span id="costo-total">0.00</span>
+        <!-- SECCIÓN 3 Y 4: ADICIONALES Y GANANCIA -->
+        <h3 style="margin-top: 20px;">Adicionales y Ganancia</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label>Packaging ($):</label>
+            <input type="number" step="0.01" id="costo-packaging" value="0">
+          </div>
+          <div>
+            <label>Servicios (Gas, Luz, etc.) ($):</label>
+            <input type="number" step="0.01" id="costo-servicios" value="0">
+          </div>
         </div>
+
+        <div style="margin-top: 10px;">
+          <label>Margen de Ganancia deseado (%):</label>
+          <input type="number" step="1" id="porcentaje-ganancia" value="100">
+        </div>
+
+        <!-- RESUMEN DE CALCULOS -->
+        <div class="resumen-box">
+          <div class="resumen-row">
+            <span>Costo Ingredientes:</span>
+            <span>$<span id="res-costo-ingredientes">0.00</span></span>
+          </div>
+          <div class="resumen-row">
+            <span>Costo Total Producción:</span>
+            <span>$<span id="res-costo-total">0.00</span></span>
+          </div>
+          <div class="resumen-row destacado">
+            <span>Precio de Venta Sugerido:</span>
+            <span>$<span id="res-precio-venta">0.00</span></span>
+          </div>
+          <div class="resumen-row">
+            <span>Precio por Unidad / Porción:</span>
+            <span>$<span id="res-precio-unidad">0.00</span></span>
+          </div>
+          <div class="resumen-row">
+            <span>Ganancia Real Neta:</span>
+            <span class="ganancia-text">$<span id="res-ganancia-real">0.00</span></span>
+          </div>
+        </div>
+
+        <!-- EXPORTACIONES -->
+        <button onclick="exportarFichaTecnicaPDF()" class="btn-export" style="width: 100%;">📄 Exportar Ficha Técnica en PDF</button>
+        <button onclick="guardarEnListaPrecios()" class="btn-primary" style="width: 100%; margin-top: 8px;">➕ Agregar a Lista de Precios</button>
       </div>
+    </div>
+
+    <!-- SECCIÓN 5: LISTA DE PRECIOS AL PÚBLICO -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>3. Lista de Precios al Público</h2>
+      <ul id="lista-precios-publico"></ul>
+      <button onclick="exportarListaPreciosPDF()" class="btn-secondary" style="width: 100%; margin-top: 10px;">📄 Exportar Lista de Precios en PDF</button>
     </div>
   </div>
 
   <script>
-    // Variables de estado
     let insumos = JSON.parse(localStorage.getItem('insumos')) || [];
+    let listaPrecios = JSON.parse(localStorage.getItem('listaPrecios')) || [];
     let recetaActual = [];
 
-    // Referencias HTML
+    // Referencias DOM
     const formInsumo = document.getElementById('form-insumo');
     const listaInsumos = document.getElementById('lista-insumos');
     const selectInsumo = document.getElementById('select-insumo');
-    const formReceta = document.getElementById('form-receta');
+    const formAgregarIngrediente = document.getElementById('form-agregar-ingrediente');
     const listaReceta = document.getElementById('lista-receta');
-    const costoTotalEl = document.getElementById('costo-total');
+    const listaPreciosEl = document.getElementById('lista-precios-publico');
 
-    // Convertir todo a unidad base (gramos, mililitros o unidades individuales)
+    // Escuchar cambios en costos fijos/porcentajes
+    ['costo-packaging', 'costo-servicios', 'porcentaje-ganancia', 'receta-unidades-num'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calcularTotales);
+    });
+
     function obtenerPrecioBase(insumo) {
       let cantidadBase = insumo.cantidad;
       if (insumo.unidad === 'kg' || insumo.unidad === 'litro') {
@@ -214,7 +368,7 @@
       return insumo.precio / cantidadBase;
     }
 
-    // Guardar insumo
+    // Guardar Insumo
     formInsumo.addEventListener('submit', (e) => {
       e.preventDefault();
       const nuevoInsumo = {
@@ -231,28 +385,24 @@
       renderInsumos();
     });
 
-    // Borrar insumo
     function borrarInsumo(id) {
       insumos = insumos.filter(item => item.id !== id);
       localStorage.setItem('insumos', JSON.stringify(insumos));
       renderInsumos();
     }
 
-    // Renderizar Insumos en la UI y en el Select
     function renderInsumos() {
       listaInsumos.innerHTML = '';
-      selectInsumo.innerHTML = '<option value="">-- Elige un ingrediente --</option>';
+      selectInsumo.innerHTML = '<option value="">-- Seleccionar --</option>';
 
       insumos.forEach(item => {
-        // Render lista
         const li = document.createElement('li');
         li.innerHTML = `
-          <span><strong>${item.nombre}</strong> (${item.cantidad} ${item.unidad} - $${item.precio})</span>
+          <span><strong>${item.nombre}</strong> (${item.cantidad}${item.unidad} - $${item.precio})</span>
           <button class="btn-danger" onclick="borrarInsumo(${item.id})">X</button>
         `;
         listaInsumos.appendChild(li);
 
-        // Render select
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = `${item.nombre} ($${item.precio} / ${item.cantidad}${item.unidad})`;
@@ -260,8 +410,8 @@
       });
     }
 
-    // Agregar ingrediente a la receta
-    formReceta.addEventListener('submit', (e) => {
+    // Agregar ingrediente
+    formAgregarIngrediente.addEventListener('submit', (e) => {
       e.preventDefault();
       const insumoId = parseInt(selectInsumo.value);
       const cantidadUsada = parseFloat(document.getElementById('receta-cantidad').value);
@@ -270,10 +420,7 @@
       if (!insumo) return;
 
       const precioUnitario = obtenerPrecioBase(insumo);
-      
-      // Ajuste si ingresa en gramos cuando el insumo se guardó en kg
-      let cantidadProcesada = cantidadUsada;
-      let costoItem = precioUnitario * cantidadProcesada;
+      let costoItem = precioUnitario * cantidadUsada;
 
       recetaActual.push({
         id: Date.now(),
@@ -283,38 +430,191 @@
         costo: costoItem
       });
 
-      formReceta.reset();
+      document.getElementById('receta-cantidad').value = '';
       renderReceta();
     });
 
-    // Borrar ingrediente de la receta
-    function borrarRecetaItem(id) {
+    function borrarIngrediente(id) {
       recetaActual = recetaActual.filter(item => item.id !== id);
       renderReceta();
     }
 
-    // Renderizar Receta y calcular Total
     function renderReceta() {
       listaReceta.innerHTML = '';
-      let total = 0;
-
       recetaActual.forEach(item => {
-        total += item.costo;
         const li = document.createElement('li');
         li.innerHTML = `
           <span>${item.nombre} - ${item.cantidadUsada} ${item.unidad}</span>
           <span><strong>$${item.costo.toFixed(2)}</strong> 
-            <button class="btn-danger" onclick="borrarRecetaItem(${item.id})">X</button>
+            <button class="btn-danger" onclick="borrarIngrediente(${item.id})">X</button>
           </span>
         `;
         listaReceta.appendChild(li);
       });
-
-      costoTotalEl.textContent = total.toFixed(2);
+      calcularTotales();
     }
 
-    // Carga inicial
+    function calcularTotales() {
+      const costoIngredientes = recetaActual.reduce((acc, item) => acc + item.costo, 0);
+      const packaging = parseFloat(document.getElementById('costo-packaging').value) || 0;
+      const servicios = parseFloat(document.getElementById('costo-servicios').value) || 0;
+      const porcentaje = parseFloat(document.getElementById('porcentaje-ganancia').value) || 0;
+      const unidades = parseInt(document.getElementById('receta-unidades-num').value) || 1;
+
+      const costoTotalProd = costoIngredientes + packaging + servicios;
+      const gananciaMonto = costoTotalProd * (porcentaje / 100);
+      const precioVentaTotal = costoTotalProd + gananciaMonto;
+      const precioUnidad = precioVentaTotal / unidades;
+
+      document.getElementById('res-costo-ingredientes').textContent = costoIngredientes.toFixed(2);
+      document.getElementById('res-costo-total').textContent = costoTotalProd.toFixed(2);
+      document.getElementById('res-precio-venta').textContent = precioVentaTotal.toFixed(2);
+      document.getElementById('res-precio-unidad').textContent = precioUnidad.toFixed(2);
+      document.getElementById('res-ganancia-real').textContent = gananciaMonto.toFixed(2);
+
+      return {
+        costoIngredientes,
+        costoTotalProd,
+        precioVentaTotal,
+        precioUnidad,
+        gananciaMonto,
+        unidades
+      };
+    }
+
+    // Lista de precios
+    function guardarEnListaPrecios() {
+      const nombre = document.getElementById('receta-nombre').value;
+      const rendimiento = document.getElementById('receta-rendimiento').value;
+      const totales = calcularTotales();
+
+      if (!nombre) {
+        alert('Por favor ingresa un nombre para la receta.');
+        return;
+      }
+
+      const item = {
+        id: Date.now(),
+        nombre,
+        rendimiento,
+        precioTotal: totales.precioVentaTotal,
+        precioUnidad: totales.precioUnidad
+      };
+
+      listaPrecios.push(item);
+      localStorage.setItem('listaPrecios', JSON.stringify(listaPrecios));
+      renderListaPrecios();
+    }
+
+    function borrarPrecio(id) {
+      listaPrecios = listaPrecios.filter(i => i.id !== id);
+      localStorage.setItem('listaPrecios', JSON.stringify(listaPrecios));
+      renderListaPrecios();
+    }
+
+    function renderListaPrecios() {
+      listaPreciosEl.innerHTML = '';
+      listaPrecios.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${item.nombre}</strong> (${item.rendimiento})</span>
+          <span><strong>$${item.precioTotal.toFixed(2)}</strong> ($${item.precioUnidad.toFixed(2)} c/u)
+            <button class="btn-danger" onclick="borrarPrecio(${item.id})">X</button>
+          </span>
+        `;
+        listaPreciosEl.appendChild(li);
+      });
+    }
+
+    // EXPORTACIÓN DE PDFS
+    function exportarFichaTecnicaPDF() {
+      const nombreReceta = document.getElementById('receta-nombre').value || 'Receta Sin Nombre';
+      const rendimiento = document.getElementById('receta-rendimiento').value || '-';
+      const totales = calcularTotales();
+
+      let filasIngredientes = recetaActual.map(i => `
+        <tr>
+          <td>${i.nombre}</td>
+          <td>${i.cantidadUsada} ${i.unidad}</td>
+          <td>$${i.costo.toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+      const element = document.createElement('div');
+      element.className = 'pdf-container';
+      element.innerHTML = `
+        <div class="pdf-header">
+          <h1>Calu Pastelería 🧁</h1>
+          <h2>Ficha Técnica y Costos: ${nombreReceta}</h2>
+          <p><strong>Rendimiento:</strong> ${rendimiento} (${totales.unidades} unidades)</p>
+        </div>
+        <h3>Detalle de Ingredientes</h3>
+        <table class="pdf-table">
+          <thead>
+            <tr><th>Ingrediente</th><th>Cantidad</th><th>Costo</th></tr>
+          </thead>
+          <tbody>${filasIngredientes}</tbody>
+        </table>
+        <h3 style="margin-top:20px;">Resumen de Costos y Ganancia</h3>
+        <table class="pdf-table">
+          <tr><td>Costo de Ingredientes</td><td>$${totales.costoIngredientes.toFixed(2)}</td></tr>
+          <tr><td>Packaging y Servicios</td><td>$${(totales.costoTotalProd - totales.costoIngredientes).toFixed(2)}</td></tr>
+          <tr><td><strong>Costo Total de Producción</strong></td><td><strong>$${totales.costoTotalProd.toFixed(2)}</strong></td></tr>
+          <tr><td><strong>Precio de Venta Sugerido</strong></td><td><strong>$${totales.precioVentaTotal.toFixed(2)}</strong></td></tr>
+          <tr><td>Precio por Unidad / Porción</td><td>$${totales.precioUnidad.toFixed(2)}</td></tr>
+          <tr><td><strong>Ganancia Real Neta</strong></td><td><strong style="color:#8A9279;">$${totales.gananciaMonto.toFixed(2)}</strong></td></tr>
+        </table>
+      `;
+
+      html2pdf().set({
+        margin: 10,
+        filename: `Ficha_Tecnica_${nombreReceta}.pdf`,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
+    }
+
+    function exportarListaPreciosPDF() {
+      let filasPrecios = listaPrecios.map(i => `
+        <tr>
+          <td><strong>${i.nombre}</strong></td>
+          <td>${i.rendimiento}</td>
+          <td>$${i.precioTotal.toFixed(2)}</td>
+          <td>$${i.precioUnidad.toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+      const element = document.createElement('div');
+      element.className = 'pdf-container';
+      element.innerHTML = `
+        <div class="pdf-header">
+          <h1>Calu Pastelería 🧁</h1>
+          <h2>Lista de Precios al Público</h2>
+        </div>
+        <table class="pdf-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Tamaño / Rendimiento</th>
+              <th>Precio Total</th>
+              <th>Precio por Unidad</th>
+            </tr>
+          </thead>
+          <tbody>${filasPrecios}</tbody>
+        </table>
+      `;
+
+      html2pdf().set({
+        margin: 10,
+        filename: 'Lista_de_Precios_Calu_Pasteleria.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
+    }
+
+    // Inicialización
     renderInsumos();
+    renderListaPrecios();
   </script>
 </body>
 </html>
