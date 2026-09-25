@@ -1,175 +1,320 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#68745a">
-<link rel="manifest" href="manifest.json">
-<title>Calu Pastelería · Gestión</title>
-<style>
-:root{--bordo:#6f2636;--bordo2:#551c29;--moss:#68745a;--moss2:#4f5c45;--pink:#c58f9b;--cream:#f8f1e7;--paper:#fffaf4;--ink:#3e3b37;--line:#e4d9cc;--danger:#a85c5c}
-*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,sans-serif}
-header{background:var(--bordo);color:white;padding:18px 20px;position:sticky;top:0;z-index:5}header h1{margin:0;font-size:22px}header small{opacity:.85}
-nav{display:flex;gap:7px;overflow:auto;padding:10px;background:var(--paper);border-bottom:1px solid var(--line)}
-nav button{border:0;background:transparent;padding:9px 12px;border-radius:20px;white-space:nowrap;color:var(--ink);cursor:pointer}
-nav button.active{background:var(--pink);color:white}
-main{max-width:1100px;margin:auto;padding:18px}.view{display:none}.view.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 8px #6b5d4b10}
-.metric{font-size:28px;font-weight:bold;color:var(--bordo);margin-top:6px}
-h2{color:var(--bordo);margin-top:8px}.section{margin-bottom:20px}
-button.primary{background:var(--moss);color:#fff;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}
-button.secondary{background:var(--pink);color:#fff;border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
-button.danger{background:var(--danger);color:#fff;border:0;border-radius:9px;padding:7px 10px;cursor:pointer}
-input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fffdf9;color:var(--ink)}
-label{font-size:13px;font-weight:bold;display:block;margin:8px 0 4px}
-.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-table{width:100%;border-collapse:collapse;background:var(--paper);border-radius:12px;overflow:hidden}
-th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{background:#eee4d7}
-.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:var(--pink);color:white;font-size:12px}
-.total{font-size:20px;font-weight:bold;color:var(--bordo)}
-.muted{color:#777;font-size:13px}.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}
-.modalbox{background:var(--paper);border-radius:18px;padding:20px;max-width:720px;width:100%;max-height:90vh;overflow:auto}
-@media(max-width:600px){main{padding:12px}.metric{font-size:24px}th,td{font-size:12px;padding:7px}}
-.price,.money,.highlight{color:var(--bordo);font-weight:700}.status,.deposit{background:var(--pink);color:white;border-radius:99px;padding:5px 9px;display:inline-block;font-size:12px}.action{background:var(--moss);color:white;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calu Pastelería - Costos y Recetas</title>
+  <style>
+    :root {
+      --primary: #e8a598;
+      --primary-dark: #d28b7e;
+      --bg: #fffaf8;
+      --card-bg: #ffffff;
+      --text: #4a3e3d;
+      --border: #f0d8d2;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3 {
+      color: var(--primary-dark);
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 1fr solid var(--border);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+
+    input, select, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 1em;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+      padding: 4px 8px;
+      font-size: 0.8em;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .total-box {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: var(--bg);
+      border-radius: 8px;
+      text-align: right;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--primary-dark);
+    }
+  </style>
 </head>
 <body>
-<header><h1>Calu Pastelería</h1><small>Gestión de ventas, costos y pedidos</small></header>
-<nav id="nav"></nav>
-<main>
-<section id="inicio" class="view active">
-<h2>Resumen</h2>
-<div class="grid">
-<div class="card">Ingresos del mes<div class="metric" id="mIngresos">$0</div></div>
-<div class="card">Gastos del mes<div class="metric" id="mGastos">$0</div></div>
-<div class="card">Ganancia<div class="metric" id="mGanancia">$0</div></div>
-<div class="card">Pendiente de cobro<div class="metric" id="mPendiente">$0</div></div>
-</div>
-<div class="section"><h2>Próximos pedidos</h2><div id="proximos" class="card"></div></div>
-</section>
 
-<section id="pedidos" class="view">
-<div class="row"><h2>Pedidos y señas</h2><button class="primary" onclick="openPedido()">+ Nuevo pedido</button></div>
-<div id="listaPedidos"></div>
-</section>
+  <div class="container">
+    <h1>Calu Pastelería 🧁</h1>
 
-<section id="productos" class="view">
-<div class="row"><h2>Recetas y productos</h2><button class="primary" onclick="openReceta()">+ Nueva receta</button></div>
-<p class="muted">Podés guardar una receta base, calcular su costo y crear variantes por tamaño.</p>
-<div id="listaRecetas"></div>
-</section>
+    <div class="grid">
+      <!-- SECCIÓN 1: GESTIÓN DE INSUMOS -->
+      <div class="card">
+        <h2>1. Insumos / Ingredientes</h2>
+        <form id="form-insumo">
+          <div>
+            <label>Nombre del Insumo:</label>
+            <input type="text" id="insumo-nombre" placeholder="Ej. Harina 0000" required>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 2;">
+              <label>Cantidad total paquete:</label>
+              <input type="number" step="0.01" id="insumo-cantidad" placeholder="1" required>
+            </div>
+            <div style="flex: 1;">
+              <label>Unidad:</label>
+              <select id="insumo-unidad">
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="litro">litro</option>
+                <option value="ml">ml</option>
+                <option value="un">unidad</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label>Precio de compra ($):</label>
+            <input type="number" step="0.01" id="insumo-precio" placeholder="1000" required>
+          </div>
+          <button type="submit">Guardar Insumo</button>
+        </form>
 
-<section id="finanzas" class="view">
-<div class="row"><h2>Ingresos y gastos</h2><button class="primary" onclick="openMovimiento()">+ Registrar movimiento</button></div>
-<div id="listaMov"></div>
-</section>
+        <h3>Mis Insumos</h3>
+        <ul id="lista-insumos"></ul>
+      </div>
 
-<section id="presupuestos" class="view">
-<div class="row"><h2>Presupuestos</h2><button class="primary" onclick="openPresupuesto()">+ Nuevo presupuesto</button></div>
-<div id="listaPresupuestos"></div>
-</section>
+      <!-- SECCIÓN 2: CALCULADORA DE RECETAS -->
+      <div class="card">
+        <h2>2. Armar Receta</h2>
+        <form id="form-receta">
+          <div>
+            <label>Seleccionar Insumo:</label>
+            <select id="select-insumo" required>
+              <option value="">-- Elige un ingrediente --</option>
+            </select>
+          </div>
+          <div>
+            <label>Cantidad requerida para la receta:</label>
+            <input type="number" step="0.01" id="receta-cantidad" placeholder="Ej. 250 (g) o 0.25 (kg)" required>
+          </div>
+          <button type="submit">Agregar a la Receta</button>
+        </form>
 
-<section id="ajustes" class="view">
-<h2>Datos</h2>
-<div class="card">
-<p>Esta primera versión guarda la información en este navegador mediante almacenamiento local.</p>
-<button class="secondary" onclick="exportarDatos()">Exportar respaldo JSON</button>
-<button class="secondary" onclick="window.print()">Imprimir / guardar PDF</button>
-<hr>
-<label>Importar respaldo JSON</label><input type="file" id="importFile" accept=".json" onchange="importarDatos(event)">
-</div>
-</section>
-</main>
+        <h3>Ingredientes de la Receta</h3>
+        <ul id="lista-receta"></ul>
 
-<div id="modal" class="modal"><div class="modalbox" id="modalbox"></div></div>
+        <div class="total-box">
+          Costo Total: $<span id="costo-total">0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<script>
-const KEY="calu_pasteleria_v1";
-let db=JSON.parse(localStorage.getItem(KEY)||'{"pedidos":[],"recetas":[],"movimientos":[],"presupuestos":[]}');
-const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(n)||0);
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(db));renderAll()};
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-function nav(){
- const items=[["inicio","Inicio"],["pedidos","Pedidos"],["productos","Recetas / costos"],["finanzas","Finanzas"],["presupuestos","Presupuestos"],["ajustes","Datos"]];
- document.getElementById("nav").innerHTML=items.map(x=>`<button onclick="show('${x[0]}')" id="n-${x[0]}">${x[1]}</button>`).join("");
-}
-function show(id){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));document.getElementById("n-"+id).classList.add("active");renderAll()}
-function closeModal(){document.getElementById("modal").classList.remove("open")}
-function modal(html){document.getElementById("modalbox").innerHTML=html;document.getElementById("modal").classList.add("open")}
-function openPedido(p=null){
- modal(`<h2>${p?'Editar':'Nuevo'} pedido</h2><div class="formgrid">
-<label>Cliente<input id="pCliente" value="${p?.cliente||''}"></label>
-<label>Producto / detalle<input id="pProducto" value="${p?.producto||''}"></label>
-<label>Fecha de entrega<input id="pFecha" type="date" value="${p?.fecha||''}"></label>
-<label>Precio total<input id="pTotal" type="number" value="${p?.total||''}"></label>
-<label>Seña cobrada<input id="pSena" type="number" value="${p?.sena||''}"></label>
-<label>Estado<select id="pEstado"><option>Pendiente</option><option>Confirmado</option><option>Entregado</option><option>Cancelado</option></select></label></div>
-<label>Notas<textarea id="pNotas">${p?.notas||''}</textarea></label><br>
-<button class="primary" onclick="savePedido('${p?.id||''}')">Guardar</button> <button onclick="closeModal()">Cancelar</button>`);
- if(p)document.getElementById("pEstado").value=p.estado;
-}
-function savePedido(id){
- const obj={id:id||uid(),cliente:pCliente.value,producto:pProducto.value,fecha:pFecha.value,total:+pTotal.value||0,sena:+pSena.value||0,estado:pEstado.value,notas:pNotas.value};
- const i=db.pedidos.findIndex(x=>x.id===obj.id); if(i>=0)db.pedidos[i]=obj;else db.pedidos.push(obj);closeModal();save();
-}
-function del(type,id){if(confirm("¿Eliminar este registro?")){db[type]=db[type].filter(x=>x.id!==id);save()}}
-function openMovimiento(m=null){
- modal(`<h2>Registrar movimiento</h2><div class="formgrid">
-<label>Tipo<select id="mTipo"><option>Ingreso</option><option>Gasto</option></select></label>
-<label>Fecha<input id="mFecha" type="date" value="${m?.fecha||new Date().toISOString().slice(0,10)}"></label>
-<label>Concepto<input id="mConcepto" value="${m?.concepto||''}"></label>
-<label>Monto<input id="mMonto" type="number" value="${m?.monto||''}"></label></div><br>
-<button class="primary" onclick="saveMov('${m?.id||''}')">Guardar</button> <button onclick="closeModal()">Cancelar</button>`);
-}
-function saveMov(id){const o={id:id||uid(),tipo:mTipo.value,fecha:mFecha.value,concepto:mConcepto.value,monto:+mMonto.value||0};let i=db.movimientos.findIndex(x=>x.id===o.id);if(i>=0)db.movimientos[i]=o;else db.movimientos.push(o);closeModal();save()}
-function openReceta(r=null){
- modal(`<h2>${r?'Editar':'Nueva'} receta</h2>
-<label>Nombre<input id="rNombre" value="${r?.nombre||''}" placeholder="Ej. Tarta de frutilla"></label>
-<label>Rendimiento / tamaño base<input id="rRend" value="${r?.rend||''}" placeholder="Ej. 22 cm / 10 porciones"></label>
-<label>Ingredientes</label><textarea id="rIng" rows="6" placeholder="Ejemplo:
-Harina | 250 | g | 1200
-Azúcar | 150 | g | 1100
-Huevos | 3 | unidad | 1800
-Crema | 200 | ml | 2500"></textarea>
-<p class="muted">Formato: ingrediente | cantidad usada | unidad | precio de compra del envase/pack. La calculadora estima el costo proporcional.</p>
-<div class="formgrid"><label>Merma %<input id="rMerma" type="number" value="${r?.merma??5}"></label><label>Envase / extra<input id="rExtra" type="number" value="${r?.extra||0}"></label><label>Ganancia deseada %<input id="rGan" type="number" value="${r?.gan||50}"></label></div><br>
-<button class="primary" onclick="saveReceta('${r?.id||''}')">Guardar y calcular</button> <button onclick="closeModal()">Cancelar</button>`);
- if(r) rIng.value=r.ing;
-}
-function calcReceta(r){
- let sum=0;
- (r.ing||"").split("\\n").forEach(line=>{let a=line.split("|").map(x=>x.trim());if(a.length>=4){let qty=+a[1]||0,price=+a[3]||0;sum+=qty*price}});
- // Base simple: for exact costing, pack quantity can be added later.
- let costo=(sum*(1+(+r.merma||0)/100))+(+r.extra||0);
- let precio=costo*(1+(+r.gan||0)/100);
- return {costo,precio};
-}
-function saveReceta(id){const o={id:id||uid(),nombre:rNombre.value,rend:rRend.value,ing:rIng.value,merma:+rMerma.value||0,extra:+rExtra.value||0,gan:+rGan.value||0};let i=db.recetas.findIndex(x=>x.id===o.id);if(i>=0)db.recetas[i]=o;else db.recetas.push(o);closeModal();save()}
-function openPresupuesto(){
- const opts=db.recetas.map(r=>`<option value="${r.id}">${r.nombre}</option>`).join("");
- modal(`<h2>Nuevo presupuesto</h2><label>Cliente<input id="bCliente"></label><label>Receta/producto<select id="bReceta">${opts}</select></label>
-<div class="formgrid"><label>Cantidad<input id="bCant" type="number" value="1" min="1"></label><label>Ganancia %<input id="bGan" type="number" value="50"></label></div><br>
-<button class="primary" onclick="calcularPresupuesto()">Calcular</button> <button onclick="closeModal()">Cancelar</button><div id="bResultado"></div>`);
-}
-function calcularPresupuesto(){let r=db.recetas.find(x=>x.id===bReceta.value);if(!r)return;let c=calcReceta(r),q=+bCant.value||1,g=+bGan.value||0;let precio=(c.costo*(1+g/100))*q;
-bResultado.innerHTML=`<div class="card"><p>Costo estimado: <b>${money(c.costo*q)}</b></p><p>Precio sugerido: <span class="total">${money(precio)}</span></p><p>Ganancia estimada: ${money(precio-c.costo*q)}</p><button class="primary" onclick="guardarPresupuesto('${r.id}',${precio},${c.costo*q})">Guardar presupuesto</button></div>`}
-function guardarPresupuesto(rid,precio,costo){db.presupuestos.push({id:uid(),fecha:new Date().toISOString().slice(0,10),cliente:bCliente.value,receta:db.recetas.find(x=>x.id===rid)?.nombre||'',costo,precio,gan:+bGan.value||0});closeModal();save()}
-function renderAll(){
- const now=new Date(), ym=now.toISOString().slice(0,7);let ing=db.movimientos.filter(x=>x.tipo==="Ingreso"&&x.fecha.startsWith(ym)).reduce((a,x)=>a+x.monto,0),g=db.movimientos.filter(x=>x.tipo==="Gasto"&&x.fecha.startsWith(ym)).reduce((a,x)=>a+x.monto,0);
- document.getElementById("mIngresos").textContent=money(ing);document.getElementById("mGastos").textContent=money(g);document.getElementById("mGanancia").textContent=money(ing-g);
- document.getElementById("mPendiente").textContent=money(db.pedidos.filter(x=>x.estado!=="Cancelado"&&x.estado!=="Entregado").reduce((a,x)=>a+Math.max(0,x.total-x.sena),0));
- let ps=[...db.pedidos].filter(x=>x.estado!=="Entregado"&&x.estado!=="Cancelado").sort((a,b)=>(a.fecha||"").localeCompare(b.fecha||"")).slice(0,5);
- document.getElementById("proximos").innerHTML=ps.length?ps.map(x=>`<div class="row"><span><b>${x.fecha||'Sin fecha'}</b> · ${x.cliente} · ${x.producto}</span><span class="pill">${money(x.total-x.sena)} pendiente</span></div>`).join("<hr>"):"No hay pedidos pendientes.";
- document.getElementById("listaPedidos").innerHTML=db.pedidos.length?`<table><tr><th>Entrega</th><th>Cliente</th><th>Pedido</th><th>Total</th><th>Seña</th><th>Saldo</th><th></th></tr>${db.pedidos.map(x=>`<tr><td>${x.fecha||''}</td><td>${x.cliente}</td><td>${x.producto}</td><td>${money(x.total)}</td><td>${money(x.sena)}</td><td>${money(x.total-x.sena)}</td><td><button onclick='openPedido(${JSON.stringify(x)})'>Editar</button> <button class="danger" onclick="del('pedidos','${x.id}')">×</button></td></tr>`).join("")}</table>`:"<div class='card'>Todavía no hay pedidos.</div>";
- document.getElementById("listaRecetas").innerHTML=db.recetas.length?`<div class="grid">${db.recetas.map(x=>{let c=calcReceta(x);return `<div class="card"><h3>${x.nombre}</h3><p class="muted">${x.rend}</p><p>Costo: <b>${money(c.costo)}</b></p><p>Precio con ${x.gan}%: <span class="total">${money(c.precio)}</span></p><button onclick='openReceta(${JSON.stringify(x)})'>Editar</button> <button class="danger" onclick="del('recetas','${x.id}')">Eliminar</button></div>`}).join("")}</div>`:"<div class='card'>Creá tu primera receta.</div>";
- document.getElementById("listaMov").innerHTML=db.movimientos.length?`<table><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th><th></th></tr>${db.movimientos.slice().reverse().map(x=>`<tr><td>${x.fecha}</td><td>${x.tipo}</td><td>${x.concepto}</td><td>${money(x.monto)}</td><td><button class="danger" onclick="del('movimientos','${x.id}')">×</button></td></tr>`).join("")}</table>`:"<div class='card'>Todavía no hay movimientos.</div>";
- document.getElementById("listaPresupuestos").innerHTML=db.presupuestos.length?`<table><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Costo</th><th>Precio</th><th>Ganancia</th></tr>${db.presupuestos.slice().reverse().map(x=>`<tr><td>${x.fecha}</td><td>${x.cliente}</td><td>${x.receta}</td><td>${money(x.costo)}</td><td>${money(x.precio)}</td><td>${money(x.precio-x.costo)}</td></tr>`).join("")}</table>`:"<div class='card'>Los presupuestos que guardes aparecerán acá.</div>";
-}
-function exportarDatos(){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="calu-pasteleria-respaldo.json";a.click()}
-function importarDatos(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert("Respaldo importado.")}catch{alert("El archivo no es válido.")}};r.readAsText(f)}
-nav();renderAll();
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-</script>
-</body></html>
+  <script>
+    // Variables de estado
+    let insumos = JSON.parse(localStorage.getItem('insumos')) || [];
+    let recetaActual = [];
+
+    // Referencias HTML
+    const formInsumo = document.getElementById('form-insumo');
+    const listaInsumos = document.getElementById('lista-insumos');
+    const selectInsumo = document.getElementById('select-insumo');
+    const formReceta = document.getElementById('form-receta');
+    const listaReceta = document.getElementById('lista-receta');
+    const costoTotalEl = document.getElementById('costo-total');
+
+    // Convertir todo a unidad base (gramos, mililitros o unidades individuales)
+    function obtenerPrecioBase(insumo) {
+      let cantidadBase = insumo.cantidad;
+      if (insumo.unidad === 'kg' || insumo.unidad === 'litro') {
+        cantidadBase = insumo.cantidad * 1000;
+      }
+      return insumo.precio / cantidadBase;
+    }
+
+    // Guardar insumo
+    formInsumo.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nuevoInsumo = {
+        id: Date.now(),
+        nombre: document.getElementById('insumo-nombre').value,
+        cantidad: parseFloat(document.getElementById('insumo-cantidad').value),
+        unidad: document.getElementById('insumo-unidad').value,
+        precio: parseFloat(document.getElementById('insumo-precio').value)
+      };
+
+      insumos.push(nuevoInsumo);
+      localStorage.setItem('insumos', JSON.stringify(insumos));
+      formInsumo.reset();
+      renderInsumos();
+    });
+
+    // Borrar insumo
+    function borrarInsumo(id) {
+      insumos = insumos.filter(item => item.id !== id);
+      localStorage.setItem('insumos', JSON.stringify(insumos));
+      renderInsumos();
+    }
+
+    // Renderizar Insumos en la UI y en el Select
+    function renderInsumos() {
+      listaInsumos.innerHTML = '';
+      selectInsumo.innerHTML = '<option value="">-- Elige un ingrediente --</option>';
+
+      insumos.forEach(item => {
+        // Render lista
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${item.nombre}</strong> (${item.cantidad} ${item.unidad} - $${item.precio})</span>
+          <button class="btn-danger" onclick="borrarInsumo(${item.id})">X</button>
+        `;
+        listaInsumos.appendChild(li);
+
+        // Render select
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item.nombre} ($${item.precio} / ${item.cantidad}${item.unidad})`;
+        selectInsumo.appendChild(option);
+      });
+    }
+
+    // Agregar ingrediente a la receta
+    formReceta.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const insumoId = parseInt(selectInsumo.value);
+      const cantidadUsada = parseFloat(document.getElementById('receta-cantidad').value);
+
+      const insumo = insumos.find(i => i.id === insumoId);
+      if (!insumo) return;
+
+      const precioUnitario = obtenerPrecioBase(insumo);
+      
+      // Ajuste si ingresa en gramos cuando el insumo se guardó en kg
+      let cantidadProcesada = cantidadUsada;
+      let costoItem = precioUnitario * cantidadProcesada;
+
+      recetaActual.push({
+        id: Date.now(),
+        nombre: insumo.nombre,
+        cantidadUsada,
+        unidad: insumo.unidad,
+        costo: costoItem
+      });
+
+      formReceta.reset();
+      renderReceta();
+    });
+
+    // Borrar ingrediente de la receta
+    function borrarRecetaItem(id) {
+      recetaActual = recetaActual.filter(item => item.id !== id);
+      renderReceta();
+    }
+
+    // Renderizar Receta y calcular Total
+    function renderReceta() {
+      listaReceta.innerHTML = '';
+      let total = 0;
+
+      recetaActual.forEach(item => {
+        total += item.costo;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${item.nombre} - ${item.cantidadUsada} ${item.unidad}</span>
+          <span><strong>$${item.costo.toFixed(2)}</strong> 
+            <button class="btn-danger" onclick="borrarRecetaItem(${item.id})">X</button>
+          </span>
+        `;
+        listaReceta.appendChild(li);
+      });
+
+      costoTotalEl.textContent = total.toFixed(2);
+    }
+
+    // Carga inicial
+    renderInsumos();
+  </script>
+</body>
+</html>
